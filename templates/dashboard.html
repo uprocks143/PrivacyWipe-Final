@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PRIVACY_WIPE_v15</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body{background:#000;color:#0f0;font-family:monospace;}
+        .section-box{border:1px solid #0f0; background:rgba(0,20,0,0.5); padding:20px; margin-bottom:20px;}
+        input, button { border: 1px solid #0f0; background: #000; padding: 5px 10px; color: #0f0; margin: 5px 0;}
+    </style>
+</head>
+<body class="p-5">
+    <header class="flex justify-between border-b border-green-900 mb-8 pb-2">
+        <h1 class="text-2xl font-bold italic">//PRIVACY_WIPE_SUITE_v15</h1>
+        <a href="/logout" class="text-red-500">[LOGOUT]</a>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="section-box">
+            <h2 class="underline mb-2">DIVISION_01: OSINT_HUB</h2>
+            <input type="text" id="osint_q" placeholder="Enter Gmail/User/Phone" class="w-full">
+            <button onclick="runOsint()" class="w-full hover:bg-green-900">START_SCAN</button>
+            <div id="osint_res" class="mt-4 text-xs text-yellow-500"></div>
+        </div>
+
+        <div class="section-box">
+            <h2 class="underline mb-2">DIVISION_02: IMAGE_FORENSIC</h2>
+            <input type="file" id="forensic_f" class="w-full text-[10px]">
+            <button onclick="runForensic()" class="w-full hover:bg-red-900">EXTRACT_EXIF</button>
+            <pre id="forensic_res" class="mt-4 text-[8px] overflow-auto max-h-32"></pre>
+        </div>
+
+        <div class="section-box">
+            <h2 class="underline mb-2">DIVISION_03: BREACH_LAB</h2>
+            <input type="text" placeholder="Check Data Leak..." class="w-full">
+            <button class="w-full hover:bg-blue-900">QUERY_DATABASE</button>
+        </div>
+
+        <div class="section-box">
+            <h2 class="underline mb-2">DIVISION_04: WIPE_PROTOCOL</h2>
+            <p class="text-[9px] opacity-70">Target: 200,000+ Platforms</p>
+            <button onclick="alert('Starting Deep Wipe...')" class="w-full bg-green-900 text-black font-bold">INITIALIZE_WIPE</button>
+        </div>
+    </div>
+
+    <script>
+        async function runOsint() {
+            const query = document.getElementById('osint_q').value;
+            const res = await fetch('/api/osint', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
+            const data = await res.json();
+            document.getElementById('osint_res').innerText = `STATUS: ${data.status} | LEAKS: ${data.breaches.join(', ')}`;
+        }
+
+        async function runForensic() {
+            const file = document.getElementById('forensic_f').files[0];
+            const fd = new FormData(); fd.append('image', file);
+            const res = await fetch('/api/forensic', {method:'POST', body:fd});
+            const data = await res.json();
+            document.getElementById('forensic_res').innerText = JSON.stringify(data.metadata, null, 2);
+        }
+    </script>
+</body>
+</html>
