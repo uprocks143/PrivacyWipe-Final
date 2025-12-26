@@ -1,4 +1,3 @@
-
 flask
 requests
 gunicorn
@@ -6,4 +5,4 @@ Pillow
 exifread
 google-auth
 google-auth-oauthlib
-google-auth-httplib2
+pyotp
