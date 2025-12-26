@@ -6,3 +6,5 @@ exifread
 google-auth
 google-auth-oauthlib
 pyotp
+flask-mail
+
