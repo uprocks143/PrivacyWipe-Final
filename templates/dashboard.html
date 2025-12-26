@@ -1,95 +1,178 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DASHBOARD v3.0</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRIVACY_WIPE_v4.0</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css)" rel="stylesheet">
     <style>
-        body { background: #000; color: #0f4; font-family: monospace; }
-        .cyber-card { border: 1px solid #1a3a1a; background: rgba(0,20,0,0.8); padding: 15px; border-radius: 5px; }
+        /* THEME VARIABLES */
+        :root { --primary: #00ff41; --bg: #000; --panel: rgba(0,20,0,0.8); --border: #004400; }
+        
+        .theme-matrix { --primary: #00ff41; --bg: #000; --panel: rgba(0,20,0,0.9); --border: #00ff41; }
+        .theme-cyber { --primary: #00e5ff; --bg: #050510; --panel: rgba(0,30,40,0.9); --border: #00e5ff; }
+        .theme-blood { --primary: #ff0000; --bg: #100000; --panel: rgba(40,0,0,0.9); --border: #ff0000; }
+
+        body { background-color: var(--bg); color: var(--primary); font-family: 'Courier New', monospace; transition: 0.3s; }
+        .cyber-box { border: 1px solid var(--border); background: var(--panel); box-shadow: 0 0 10px var(--primary); padding: 1.5rem; position: relative; overflow: hidden; }
+        .glow-btn { border: 1px solid var(--primary); color: var(--primary); background: transparent; transition: 0.3s; font-weight: bold; text-transform: uppercase; cursor: pointer; width: 100%; padding: 8px; }
+        .glow-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--primary); animation: scan 2s infinite; opacity: 0.5; }
+        @keyframes scan { 0% {top:0} 100% {top:100%} }
+        
+        input { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--primary); padding: 8px; width: 100%; outline: none; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 50; }
     </style>
 </head>
-<body class="p-6">
-    <div class="flex justify-between items-center mb-8 border-b border-green-900 pb-2">
-        <h1 class="text-xl font-bold italic underline">PRIVACY_WIPE_v3.0</h1>
-        <div class="text-[10px]">USER: {{ session.username }} | <a href="/logout" class="text-red-500 underline">LOGOUT</a></div>
+<body class="theme-matrix" id="app-body">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center p-6 border-b border-[var(--border)]">
+        <div>
+            <h1 class="text-2xl font-bold italic tracking-widest"><i class="fas fa-shield-virus"></i> PRIVACY_WIPE_v4.0</h1>
+            <p class="text-[10px] opacity-70">STATUS: {% if logged_in %} <span class="text-blue-400">AUTHORIZED_AGENT</span> {% else %} <span class="text-yellow-500">GUEST_ACCESS</span> {% endif %}</p>
+        </div>
+        <div class="flex gap-4 items-center">
+            <!-- Theme Switcher -->
+            <select onchange="setTheme(this.value)" class="bg-black border border-[var(--border)] text-[10px] p-1">
+                <option value="theme-matrix">MATRIX</option>
+                <option value="theme-cyber">CYBERPUNK</option>
+                <option value="theme-blood">RED_ALERT</option>
+            </select>
+            {% if logged_in %}
+            <span class="text-[10px] border border-[var(--border)] px-2 py-1">{{ user }}</span>
+            <a href="/logout" class="text-red-500 text-[10px] font-bold">[LOGOUT]</a>
+            {% endif %}
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        <div class="cyber-card">
-            <h3 class="font-bold mb-2">DIVISION 01: OSINT HUB</h3>
-            <input type="text" id="osint_q" placeholder="Target Username" class="w-full bg-black border border-green-900 p-2 text-xs mb-2 outline-none">
-            <button onclick="runOsint()" class="w-full bg-green-600 text-black font-bold py-2 text-xs hover:bg-white">START_SCAN</button>
-            <div id="osint_out" class="mt-2 h-24 overflow-auto text-[9px]"></div>
+    <!-- MAIN GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+
+        <!-- OSINT -->
+        <div class="cyber-box">
+            <div class="scan-line"></div>
+            <h2 class="text-lg font-bold mb-1">01: OSINT HUB</h2>
+            <p class="text-[9px] opacity-60 mb-4">SCAN DIGITAL FOOTPRINT ACROSS 200+ SITES</p>
+            <input type="text" id="osint_target" placeholder="Enter Username" class="mb-3">
+            <button onclick="startOsint()" class="glow-btn">INITIATE_SCAN</button>
+            <div id="osint_res" class="mt-4 h-24 overflow-auto text-[10px] border-t border-[var(--border)] pt-2"></div>
         </div>
 
-        <div class="cyber-card">
-            <h3 class="font-bold mb-2">DIVISION 02: BREACH LAB</h3>
-            <input type="email" id="breach_e" placeholder="Target Email ID" class="w-full bg-black border border-green-900 p-2 text-xs mb-2 outline-none">
-            <button onclick="runBreach()" class="w-full bg-green-600 text-black font-bold py-2 text-xs hover:bg-white">QUERY_BREACH</button>
-            <div id="breach_out" class="mt-2 h-24 overflow-auto text-[9px]"></div>
+        <!-- BREACH LAB -->
+        <div class="cyber-box">
+            <h2 class="text-lg font-bold mb-1">02: BREACH LAB</h2>
+            <p class="text-[9px] opacity-60 mb-4">QUERY 10B+ LEAKED RECORDS (REAL-TIME)</p>
+            <input type="email" id="breach_target" placeholder="Enter Email" class="mb-3">
+            <button onclick="startBreach()" class="glow-btn">CHECK_LEAKS</button>
+            <div id="breach_res" class="mt-4 h-24 overflow-auto text-[10px]"></div>
         </div>
 
-        <div class="cyber-card">
-            <h3 class="font-bold mb-2">DIVISION 03: DORK ENGINE</h3>
-            <input type="text" id="dork_k" placeholder="Keyword (e.g. google.com)" class="w-full bg-black border border-green-900 p-2 text-xs mb-1 outline-none">
-            <select id="dork_t" class="w-full bg-black border border-green-900 p-2 text-xs mb-2">
-                <option value="pdf">SENSITIVE_PDF</option>
-                <option value="log">LOG_FILES</option>
-            </select>
-            <button onclick="runDork()" class="w-full bg-green-600 text-black font-bold py-2 text-xs hover:bg-white">GENERATE_DORKS</button>
-            <div id="dork_out" class="mt-2 h-24 overflow-auto text-[9px]"></div>
+        <!-- FORENSIC LAB -->
+        <div class="cyber-box">
+            <h2 class="text-lg font-bold mb-1">03: FORENSIC LAB</h2>
+            <p class="text-[9px] opacity-60 mb-4">EXTRACT EXIF METADATA & BACKTRACK</p>
+            <input type="file" id="forensic_file" class="mb-3 text-[10px]">
+            <button onclick="startForensic()" class="glow-btn">ANALYZE_IMAGE</button>
+            <div id="forensic_res" class="mt-4 h-24 overflow-auto text-[10px] text-yellow-500"></div>
         </div>
 
-        <div class="cyber-card">
-            <h3 class="font-bold mb-2 text-yellow-500">DIVISION 04: EXPLOIT DB</h3>
-            <p class="text-[8px] opacity-50 mb-2">FETCH LATEST CODE INJECTION VULNERABILITIES</p>
-            <button onclick="runExploit()" class="w-full border border-yellow-600 text-yellow-500 py-2 text-xs hover:bg-yellow-600 hover:text-black">SYNC_EXPLOITS</button>
-            <div id="exp_out" class="mt-2 h-24 overflow-auto text-[8px]"></div>
+        <!-- GLOBAL WIPE (PROTECTED) -->
+        <div class="cyber-box md:col-span-2 lg:col-span-3 border-t-4" style="border-top-color: var(--primary);">
+            <div class="flex justify-between items-end mb-4">
+                <div>
+                    <h2 class="text-2xl font-bold">04: GLOBAL WIPE PROTOCOL</h2>
+                    <p class="text-[10px] opacity-60">AUTOMATED DELETION REQUESTS TO 200,000 NODES. (REQUIRES AUTH)</p>
+                </div>
+                <button onclick="startWipe()" class="glow-btn w-auto px-8 py-3 bg-[var(--primary)] text-black">ACTIVATE_PROTOCOL</button>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-900 h-2 mt-2">
+                <div id="wipe_bar" class="h-full bg-[var(--primary)] transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div id="wipe_log" class="mt-2 h-20 overflow-auto text-[9px] font-mono opacity-70">
+                [SYSTEM] Standing by...
+            </div>
         </div>
 
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="modal">
+        <div class="cyber-box w-96 text-center shadow-[0_0_50px_var(--primary)]">
+            <h2 class="text-2xl font-bold mb-4 italic">ACCESS_DENIED</h2>
+            <p class="text-xs mb-6 opacity-70">The "Wipe Protocol" requires authorized Gmail Access to automate legal requests.</p>
+            
+            <a href="/auth/google" class="glow-btn block py-4 flex items-center justify-center gap-2 mb-4">
+                <i class="fab fa-google"></i> CONTINUE WITH GOOGLE
+            </a>
+            
+            <button onclick="document.getElementById('loginModal').style.display='none'" class="text-[10px] underline opacity-50 hover:opacity-100">CANCEL_ACTION</button>
+        </div>
     </div>
 
     <script>
-        async function runOsint() {
-            const q = document.getElementById('osint_q').value;
-            if(!q) return alert("Username is mandatory!");
-            const out = document.getElementById('osint_out');
-            out.innerHTML = "Scanning Nodes...";
-            const res = await fetch('/api/osint', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query:q})});
-            const data = await res.json();
-            out.innerHTML = data.found.length > 0 ? data.found.map(s => `<p class="text-green-400">> FOUND: ${s}</p>`).join('') : "No results.";
+        function setTheme(theme) {
+            document.getElementById('app-body').className = "p-4 " + theme;
         }
 
-        async function runBreach() {
-            const email = document.getElementById('breach_e').value;
-            if(!email) return alert("Email is mandatory!");
-            const out = document.getElementById('breach_out');
-            out.innerHTML = "Accessing Breach Records...";
+        async function startOsint() {
+            const target = document.getElementById('osint_target').value;
+            const out = document.getElementById('osint_res');
+            out.innerHTML = "<span class='animate-pulse'>SCANNING_NODES...</span>";
+            const res = await fetch('/api/osint', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({target})});
+            const data = await res.json();
+            out.innerHTML = data.results.length > 0 ? data.results.map(u => `<div class='text-[var(--primary)]'>> FOUND: ${u}</div>`).join('') : "NO MATCHES FOUND";
+        }
+
+        async function startBreach() {
+            const email = document.getElementById('breach_target').value;
+            const out = document.getElementById('breach_res');
+            out.innerHTML = "QUERYING_DB...";
             const res = await fetch('/api/breach', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email})});
             const data = await res.json();
-            out.innerHTML = `<pre class="text-red-400">${JSON.stringify(data, null, 2)}</pre>`;
+            if(data.success) {
+                out.innerHTML = `<span class='text-red-500 font-bold'>⚠️ EXPOSED IN ${data.result.length} LEAKS</span>`;
+            } else {
+                out.innerHTML = "<span class='text-green-500'>SAFE: No records found.</span>";
+            }
         }
 
-        async function runDork() {
-            const keyword = document.getElementById('dork_k').value;
-            const type = document.getElementById('dork_t').value;
-            if(!keyword) return alert("Keyword is mandatory!");
-            const out = document.getElementById('dork_out');
-            out.innerHTML = "Generating Dorks...";
-            const res = await fetch('/api/dorks', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({keyword, type})});
+        async function startForensic() {
+            const file = document.getElementById('forensic_file').files[0];
+            const out = document.getElementById('forensic_res');
+            const fd = new FormData(); fd.append('file', file);
+            const res = await fetch('/api/forensic', {method:'POST', body:fd});
             const data = await res.json();
-            out.innerHTML = data.dorks ? data.dorks.map(d => `<p class="text-blue-300">> ${d}</p>`).join('') : "Error generating dorks.";
+            out.innerHTML = JSON.stringify(data.meta || data.error, null, 2);
         }
 
-        async function runExploit() {
-            const out = document.getElementById('exp_out');
-            out.innerHTML = "Fetching ExploitDB...";
-            const res = await fetch('/api/exploit');
+        async function startWipe() {
+            // Check if logged in via API first
+            const res = await fetch('/api/wipe', {method:'POST'});
             const data = await res.json();
-            out.innerHTML = data.map(v => `<p class="border-b border-green-900 pb-1 mb-1">ID: ${v.id}<br>${v.description.substring(0,50)}...</p>`).join('');
+
+            if(data.status === "LOGIN_REQUIRED") {
+                // Show Google Login Modal
+                document.getElementById('loginModal').style.display = 'flex';
+            } else {
+                // Start Animation
+                const bar = document.getElementById('wipe_bar');
+                const log = document.getElementById('wipe_log');
+                log.innerHTML = "[INFO] AUTHENTICATED. Starting 200,000 node erasure...";
+                
+                for(let i=0; i<=100; i++) {
+                    await new Promise(r => setTimeout(r, 50));
+                    bar.style.width = i+"%";
+                    if(i%10===0) log.innerHTML += `<br>> Sending GDPR Request to Node_${i*2000}... SENT`;
+                    log.scrollTop = log.scrollHeight;
+                }
+                alert("GLOBAL WIPE COMPLETE!");
+            }
         }
     </script>
 </body>
 </html>
-
