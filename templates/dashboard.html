@@ -1,62 +1,89 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PRIVACY_WIPE_v15</title>
+    <title>DASHBOARD_v2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body{background:#000;color:#0f0;font-family:monospace;}
-        .section-box{border:1px solid #0f0; background:rgba(0,20,0,0.5); padding:20px; margin-bottom:20px;}
-        input, button { border: 1px solid #0f0; background: #000; padding: 5px 10px; color: #0f0; margin: 5px 0;}
+        :root { --neon: #00ff41; }
+        body { background: #000; color: var(--neon); font-family: 'Courier New', monospace; }
+        .cyber-card { border: 1px solid #1a3a1a; background: rgba(0,20,0,0.8); padding: 20px; position: relative; }
+        .glow { text-shadow: 0 0 10px var(--neon); }
     </style>
 </head>
-<body class="p-5">
-    <header class="flex justify-between border-b border-green-900 mb-8 pb-2">
-        <h1 class="text-2xl font-bold italic">//PRIVACY_WIPE_SUITE_v15</h1>
-        <a href="/logout" class="text-red-500">[LOGOUT]</a>
-    </header>
+<body class="p-6">
+    <div class="flex justify-between items-center mb-8 border-b border-green-900 pb-4">
+        <h1 class="text-xl font-bold glow italic">PRIVACY_WIPE_SUITE_v2.0</h1>
+        <a href="/logout" class="text-red-500 text-xs border border-red-900 px-3 py-1">[LOGOUT]</a>
+    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="section-box">
-            <h2 class="underline mb-2">DIVISION_01: OSINT_HUB</h2>
-            <input type="text" id="osint_q" placeholder="Enter Gmail/User/Phone" class="w-full">
-            <button onclick="runOsint()" class="w-full hover:bg-green-900">START_SCAN</button>
-            <div id="osint_res" class="mt-4 text-xs text-yellow-500"></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <div class="cyber-card">
+            <h3 class="font-bold">OSINT HUB</h3>
+            <p class="text-[9px] opacity-50 mb-4 uppercase">THREADED PLATFORM MAPPING ACROSS 200,000+ SITES.</p>
+            <input type="text" id="osint_q" placeholder="Target User" class="w-full bg-black border border-green-900 p-2 text-xs mb-2">
+            <button onclick="runOsint()" class="w-full bg-green-600 text-black font-bold py-1 text-xs">START_SCAN</button>
+            <div id="osint_out" class="mt-2 h-24 overflow-auto text-[10px]"></div>
         </div>
 
-        <div class="section-box">
-            <h2 class="underline mb-2">DIVISION_02: IMAGE_FORENSIC</h2>
-            <input type="file" id="forensic_f" class="w-full text-[10px]">
-            <button onclick="runForensic()" class="w-full hover:bg-red-900">EXTRACT_EXIF</button>
-            <pre id="forensic_res" class="mt-4 text-[8px] overflow-auto max-h-32"></pre>
+        <div class="cyber-card">
+            <h3 class="font-bold">FORENSIC LAB</h3>
+            <p class="text-[9px] opacity-50 mb-4 uppercase">IMAGE BACKTRACK ENGINEERING & WEB PRESENCE CHECK.</p>
+            <input type="file" id="fore_f" class="text-[9px] mb-2">
+            <button onclick="runForensic()" class="w-full bg-blue-900 text-white font-bold py-1 text-xs mb-1">BACKTRACK</button>
+            <div id="fore_out" class="mt-2 h-20 overflow-auto text-[8px] text-yellow-500"></div>
         </div>
 
-        <div class="section-box">
-            <h2 class="underline mb-2">DIVISION_03: BREACH_LAB</h2>
-            <input type="text" placeholder="Check Data Leak..." class="w-full">
-            <button class="w-full hover:bg-blue-900">QUERY_DATABASE</button>
+        <div class="cyber-card">
+            <h3 class="font-bold">BREACH LAB</h3>
+            <p class="text-[9px] opacity-50 mb-4 uppercase">DEEP WEB DATABASE QUERY FOR EXPOSED CREDENTIALS.</p>
+            <input type="email" id="breach_e" placeholder="email@test.com" class="w-full bg-black border border-green-900 p-2 text-xs mb-2">
+            <button onclick="runBreach()" class="w-full bg-green-600 text-black font-bold py-1 text-xs">QUERY_DB</button>
+            <div id="breach_out" class="mt-2 text-[10px]"></div>
         </div>
 
-        <div class="section-box">
-            <h2 class="underline mb-2">DIVISION_04: WIPE_PROTOCOL</h2>
-            <p class="text-[9px] opacity-70">Target: 200,000+ Platforms</p>
-            <button onclick="alert('Starting Deep Wipe...')" class="w-full bg-green-900 text-black font-bold">INITIALIZE_WIPE</button>
+        <div class="cyber-card">
+            <h3 class="font-bold text-yellow-500">EXPLOIT DATABASE</h3>
+            <p class="text-[9px] opacity-50 mb-4 uppercase">SYNCING WITH GLOBAL VULNERABILITY ADVISORIES.</p>
+            <button onclick="runExploit()" class="w-full border border-yellow-600 text-yellow-500 py-1 text-xs">FETCH_LATEST</button>
+            <div id="exp_out" class="mt-2 h-24 overflow-auto text-[9px]"></div>
         </div>
+
+        <div class="cyber-card md:col-span-2 border-t-2 border-red-600">
+            <h3 class="text-red-500 font-bold">GLOBAL WIPE PROTOCOL</h3>
+            <p class="text-[10px] opacity-50 uppercase">AUTOMATED DATA DELETION REQUESTS TO 200K+ IDENTIFIED NODES.</p>
+            <div class="flex gap-4 mt-4">
+                <button onclick="startWipe()" class="flex-1 bg-red-600 text-white font-bold py-3 text-xs">INITIALIZE_WIPE</button>
+                <div id="wipe-log" class="flex-2 w-full h-20 bg-black p-2 text-[8px] overflow-auto">Awaiting...</div>
+            </div>
+        </div>
+
     </div>
 
     <script>
         async function runOsint() {
-            const query = document.getElementById('osint_q').value;
-            const res = await fetch('/api/osint', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
+            const q = document.getElementById('osint_q').value;
+            const out = document.getElementById('osint_out');
+            out.innerHTML = "Scanning...";
+            const res = await fetch('/api/osint', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query:q})});
             const data = await res.json();
-            document.getElementById('osint_res').innerText = `STATUS: ${data.status} | LEAKS: ${data.breaches.join(', ')}`;
+            out.innerHTML = data.found.map(s => `<p class='text-green-400'>> FOUND: ${s}</p>`).join('');
         }
 
-        async function runForensic() {
-            const file = document.getElementById('forensic_f').files[0];
-            const fd = new FormData(); fd.append('image', file);
-            const res = await fetch('/api/forensic', {method:'POST', body:fd});
+        async function runBreach() {
+            const email = document.getElementById('breach_e').value;
+            const out = document.getElementById('breach_out');
+            const res = await fetch('/api/breach', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email})});
             const data = await res.json();
-            document.getElementById('forensic_res').innerText = JSON.stringify(data.metadata, null, 2);
+            out.innerHTML = data.success ? `<p class='text-red-500'>EXPOSED IN ${data.result.length} LEAKS</p>` : "SAFE";
+        }
+
+        async function runExploit() {
+            const out = document.getElementById('exp_out');
+            const res = await fetch('/api/exploit');
+            const data = await res.json();
+            out.innerHTML = data.map(e => `<p class='border-b border-green-900'>ID: ${e.id} - ${e.description}</p>`).join('');
         }
     </script>
 </body>
