@@ -1,100 +1,95 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>DASHBOARD_v3.0</title>
+    <title>DASHBOARD v3.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --neon: #00ff41; }
-        body { background: #000; color: var(--neon); font-family: monospace; font-size: 11px; }
-        .cyber-card { border: 1px solid #1a3a1a; background: rgba(0,20,0,0.8); padding: 15px; }
-        .glow { text-shadow: 0 0 8px var(--neon); }
+        body { background: #000; color: #0f4; font-family: monospace; }
+        .cyber-card { border: 1px solid #1a3a1a; background: rgba(0,20,0,0.8); padding: 15px; border-radius: 5px; }
     </style>
 </head>
-<body class="p-4">
-    <div class="flex justify-between items-center mb-6 border-b border-green-900 pb-2">
-        <h1 class="font-bold glow italic text-lg uppercase">Privacy_Wipe_v3.0</h1>
-        <div class="flex items-center gap-4 text-[9px]">
-            <span>NODE_ID: <span class="text-white">{{ session.username }}</span></span>
-            <a href="/logout" class="text-red-500 hover:underline">[LOGOUT]</a>
-        </div>
+<body class="p-6">
+    <div class="flex justify-between items-center mb-8 border-b border-green-900 pb-2">
+        <h1 class="text-xl font-bold italic underline">PRIVACY_WIPE_v3.0</h1>
+        <div class="text-[10px]">USER: {{ session.username }} | <a href="/logout" class="text-red-500 underline">LOGOUT</a></div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
         <div class="cyber-card">
-            <h3 class="font-bold mb-1">OSINT HUB</h3>
-            <p class="text-[8px] opacity-40 mb-3">SCANS 200,000+ SITES VIA THREADED VERIFICATION.</p>
-            <input type="text" id="osint_q" placeholder="Username" class="w-full bg-black border border-green-900 p-1 mb-2">
-            <button onclick="runOsint()" class="w-full bg-green-600 text-black font-bold py-1">START_SCAN</button>
-            <div id="osint_out" class="mt-2 h-20 overflow-auto border-t border-green-900 pt-1"></div>
+            <h3 class="font-bold mb-2">DIVISION 01: OSINT HUB</h3>
+            <input type="text" id="osint_q" placeholder="Target Username" class="w-full bg-black border border-green-900 p-2 text-xs mb-2 outline-none">
+            <button onclick="runOsint()" class="w-full bg-green-600 text-black font-bold py-2 text-xs hover:bg-white">START_SCAN</button>
+            <div id="osint_out" class="mt-2 h-24 overflow-auto text-[9px]"></div>
         </div>
 
         <div class="cyber-card">
-            <h3 class="font-bold mb-1">BREACH LAB</h3>
-            <p class="text-[8px] opacity-40 mb-3">QUERY 10B+ RECORDS FOR EXPOSED CREDENTIALS.</p>
-            <input type="email" id="breach_e" placeholder="Email" class="w-full bg-black border border-green-900 p-1 mb-2">
-            <button onclick="runBreach()" class="w-full bg-green-600 text-black font-bold py-1">QUERY_DB</button>
-            <div id="breach_out" class="mt-2"></div>
+            <h3 class="font-bold mb-2">DIVISION 02: BREACH LAB</h3>
+            <input type="email" id="breach_e" placeholder="Target Email ID" class="w-full bg-black border border-green-900 p-2 text-xs mb-2 outline-none">
+            <button onclick="runBreach()" class="w-full bg-green-600 text-black font-bold py-2 text-xs hover:bg-white">QUERY_BREACH</button>
+            <div id="breach_out" class="mt-2 h-24 overflow-auto text-[9px]"></div>
         </div>
 
         <div class="cyber-card">
-            <h3 class="font-bold mb-1">DORK ENGINE</h3>
-            <p class="text-[8px] opacity-40 mb-3">GENERATE ADVANCED DORKS FOR FILE DISCOVERY.</p>
-            <div class="flex gap-1 mb-2">
-                <input type="text" id="dork_k" placeholder="Domain" class="flex-1 bg-black border border-green-900 p-1">
-                <select id="dork_t" class="bg-black border border-green-900"><option>pdf</option><option>log</option></select>
-            </div>
-            <button onclick="runDork()" class="w-full bg-green-600 text-black font-bold py-1">GENERATE</button>
-            <div id="dork_out" class="mt-2 h-20 overflow-auto"></div>
+            <h3 class="font-bold mb-2">DIVISION 03: DORK ENGINE</h3>
+            <input type="text" id="dork_k" placeholder="Keyword (e.g. google.com)" class="w-full bg-black border border-green-900 p-2 text-xs mb-1 outline-none">
+            <select id="dork_t" class="w-full bg-black border border-green-900 p-2 text-xs mb-2">
+                <option value="pdf">SENSITIVE_PDF</option>
+                <option value="log">LOG_FILES</option>
+            </select>
+            <button onclick="runDork()" class="w-full bg-green-600 text-black font-bold py-2 text-xs hover:bg-white">GENERATE_DORKS</button>
+            <div id="dork_out" class="mt-2 h-24 overflow-auto text-[9px]"></div>
         </div>
 
         <div class="cyber-card">
-            <h3 class="font-bold mb-1">FORENSIC LAB</h3>
-            <p class="text-[8px] opacity-40 mb-3">EXTRACT EXIF & ANALYZE IMAGE METADATA.</p>
-            <input type="file" id="fore_f" class="mb-2">
-            <button onclick="runForensic()" class="w-full bg-blue-900 text-white py-1">BACKTRACK_ENG</button>
-            <div id="fore_out" class="mt-2 h-20 overflow-auto text-yellow-500"></div>
+            <h3 class="font-bold mb-2 text-yellow-500">DIVISION 04: EXPLOIT DB</h3>
+            <p class="text-[8px] opacity-50 mb-2">FETCH LATEST CODE INJECTION VULNERABILITIES</p>
+            <button onclick="runExploit()" class="w-full border border-yellow-600 text-yellow-500 py-2 text-xs hover:bg-yellow-600 hover:text-black">SYNC_EXPLOITS</button>
+            <div id="exp_out" class="mt-2 h-24 overflow-auto text-[8px]"></div>
         </div>
 
-        <div class="cyber-card">
-            <h3 class="font-bold mb-1 text-yellow-500">EXPLOIT DATABASE</h3>
-            <p class="text-[8px] opacity-40 mb-3">SYNC LATEST VULNERABILITY ADVISORIES.</p>
-            <button onclick="runExploit()" class="w-full border border-yellow-600 text-yellow-500 py-1">FETCH_DB</button>
-            <div id="exp_out" class="mt-2 h-20 overflow-auto text-[8px]"></div>
-        </div>
-
-        <div class="cyber-card border-t-2 border-red-600">
-            <h3 class="font-bold text-red-500 mb-1">WIPE PROTOCOL</h3>
-            <p class="text-[8px] opacity-40 mb-3">INITIATE DELETION ON 200K NODES.</p>
-            <button onclick="startWipe()" class="w-full bg-red-600 text-white font-black py-2">INITIALIZE</button>
-            <div id="wipe-log" class="mt-2 h-20 bg-black p-1 text-[7px] overflow-auto">Awaiting...</div>
-        </div>
     </div>
 
     <script>
         async function runOsint() {
             const q = document.getElementById('osint_q').value;
+            if(!q) return alert("Username is mandatory!");
             const out = document.getElementById('osint_out');
-            out.innerHTML = "<span class='animate-pulse'>SCANNING_NODES...</span>";
+            out.innerHTML = "Scanning Nodes...";
             const res = await fetch('/api/osint', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query:q})});
             const data = await res.json();
-            out.innerHTML = data.found.map(s => `<p class='text-white'>> FOUND: ${s}</p>`).join('');
+            out.innerHTML = data.found.length > 0 ? data.found.map(s => `<p class="text-green-400">> FOUND: ${s}</p>`).join('') : "No results.";
         }
+
         async function runBreach() {
-            const e = document.getElementById('breach_e').value;
-            const res = await fetch('/api/breach', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:e})});
+            const email = document.getElementById('breach_e').value;
+            if(!email) return alert("Email is mandatory!");
+            const out = document.getElementById('breach_out');
+            out.innerHTML = "Accessing Breach Records...";
+            const res = await fetch('/api/breach', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email})});
             const data = await res.json();
-            document.getElementById('breach_out').innerHTML = data.success ? `<p class='text-red-500'>EXPOSED IN ${data.result.length} LEAKS</p>` : "SYSTEM_SAFE";
+            out.innerHTML = `<pre class="text-red-400">${JSON.stringify(data, null, 2)}</pre>`;
         }
+
+        async function runDork() {
+            const keyword = document.getElementById('dork_k').value;
+            const type = document.getElementById('dork_t').value;
+            if(!keyword) return alert("Keyword is mandatory!");
+            const out = document.getElementById('dork_out');
+            out.innerHTML = "Generating Dorks...";
+            const res = await fetch('/api/dorks', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({keyword, type})});
+            const data = await res.json();
+            out.innerHTML = data.dorks ? data.dorks.map(d => `<p class="text-blue-300">> ${d}</p>`).join('') : "Error generating dorks.";
+        }
+
         async function runExploit() {
+            const out = document.getElementById('exp_out');
+            out.innerHTML = "Fetching ExploitDB...";
             const res = await fetch('/api/exploit');
             const data = await res.json();
-            document.getElementById('exp_out').innerHTML = data.map(v => `<p class='border-b border-green-900'>ID: ${v.id} - ${v.description.substring(0,30)}...</p>`).join('');
-        }
-        function startWipe() {
-            document.getElementById('wipe-log').innerHTML += "<br>[INFO] Initiating Global Node Deletion...";
+            out.innerHTML = data.map(v => `<p class="border-b border-green-900 pb-1 mb-1">ID: ${v.id}<br>${v.description.substring(0,50)}...</p>`).join('');
         }
     </script>
 </body>
 </html>
+
