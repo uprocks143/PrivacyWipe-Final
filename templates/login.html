@@ -2,18 +2,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AUTH_PORTAL</title>
+    <title>PRIVACY_WIPE_v3_AUTH</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>body { background: #000; color: #0f4; font-family: monospace; }</style>
+    <style>
+        body { background: #000; color: #0f4; font-family: monospace; }
+        .tab-active { border-bottom: 2px solid #0f4; background: rgba(0,255,68,0.05); }
+    </style>
 </head>
 <body class="flex items-center justify-center h-screen p-4">
     <div class="border border-green-500 p-8 w-full max-w-sm bg-black/90 shadow-[0_0_20px_#0f4]">
-        <h2 class="text-xl font-bold mb-6 text-center italic tracking-widest">// PRIVACY_WIPE_v2.0</h2>
-        <form action="/login" method="POST">
-            <input type="text" name="username" placeholder="USERNAME" class="w-full bg-black border border-green-900 p-2 mb-4 text-xs outline-none">
-            <input type="password" name="password" placeholder="PASSWORD" class="w-full bg-black border border-green-900 p-2 mb-6 text-xs outline-none">
-            <button class="w-full bg-green-600 text-black font-bold py-2 hover:bg-white">INITIATE_SESSION</button>
+        <h2 class="text-xl font-bold mb-6 text-center italic tracking-widest">// PRIVACY_WIPE_v3.0</h2>
+        
+        <div class="flex mb-6 text-[10px] font-bold">
+            <button id="l-tab" class="flex-1 py-2 tab-active" onclick="switchAuth('login')">LOGIN</button>
+            <button id="s-tab" class="flex-1 py-2" onclick="switchAuth('signup')">SIGNUP</button>
+        </div>
+
+        <form id="auth-form" action="/login" method="POST">
+            <input type="text" name="username" placeholder="USERNAME" class="w-full bg-black border border-green-900 p-2 mb-4 text-xs outline-none focus:border-green-400" required>
+            <input type="password" name="password" placeholder="PASSWORD" class="w-full bg-black border border-green-900 p-2 mb-4 text-xs outline-none focus:border-green-400" required>
+            <div id="signup-extra" class="hidden">
+                <input type="text" name="hint" placeholder="RECOVERY_HINT" class="w-full bg-black border border-green-900 p-2 mb-4 text-xs outline-none">
+            </div>
+            <button id="auth-btn" class="w-full bg-green-600 text-black font-bold py-2 text-xs hover:bg-white transition">INITIATE_SESSION</button>
         </form>
+
+        <div class="flex items-center my-4 opacity-30"><div class="flex-grow border-t border-green-900"></div><span class="px-2 text-[8px]">OR</span><div class="flex-grow border-t border-green-900"></div></div>
+        
+        <button class="w-full border border-white/20 py-2 text-[10px] flex items-center justify-center gap-2 hover:bg-white/5">
+            <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-3"> CONTINUE_WITH_GOOGLE
+        </button>
     </div>
+
+    <script>
+        function switchAuth(type) {
+            const form = document.getElementById('auth-form');
+            const extra = document.getElementById('signup-extra');
+            const btn = document.getElementById('auth-btn');
+            if(type === 'signup') {
+                form.action = '/signup'; extra.classList.remove('hidden'); btn.innerText = 'CREATE_IDENTITY';
+                document.getElementById('s-tab').classList.add('tab-active'); document.getElementById('l-tab').classList.remove('tab-active');
+            } else {
+                form.action = '/login'; extra.classList.add('hidden'); btn.innerText = 'INITIATE_SESSION';
+                document.getElementById('l-tab').classList.add('tab-active'); document.getElementById('s-tab').classList.remove('tab-active');
+            }
+        }
+    </script>
 </body>
 </html>
