@@ -1,66 +1,26 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PRIVACY_WIPE_v3_AUTH</title>
+    <title>LOGIN v3.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>body { background: #000; color: #0f4; font-family: monospace; }</style>
 </head>
 <body class="flex items-center justify-center h-screen p-4">
-    <div class="border border-green-500 p-8 w-full max-w-sm bg-black shadow-[0_0_25px_#0f4]">
+    <div class="border border-green-500 p-8 w-full max-w-sm bg-black shadow-[0_0_20px_#0f4]">
         <h2 class="text-xl font-bold mb-6 text-center italic tracking-widest">// PRIVACY_WIPE_v3.0</h2>
         
-        <div id="auth-main">
-            <a href="/login/google" class="w-full border border-white/20 py-2 text-[10px] flex items-center justify-center gap-2 hover:bg-white/5 mb-4">
-                <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-3"> CONTINUE_WITH_GOOGLE
-            </a>
+        <a href="/login/google" class="w-full border border-white/20 py-2 text-[10px] flex items-center justify-center gap-2 hover:bg-white/10 transition mb-6">
+            <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-4"> CONTINUE_WITH_GOOGLE
+        </a>
 
-            <div class="flex items-center my-4 opacity-30"><div class="flex-grow border-t border-green-900"></div><span class="px-2 text-[8px]">OR</span><div class="flex-grow border-t border-green-900"></div></div>
+        <div class="flex items-center my-4 opacity-30"><div class="flex-grow border-t border-green-900"></div><span class="px-2 text-[8px]">OR_MANUAL_LOGIN</span><div class="flex-grow border-t border-green-900"></div></div>
 
-            <input type="text" id="user_id" placeholder="EMAIL OR PHONE NUMBER" class="w-full bg-black border border-green-900 p-2 mb-4 text-xs outline-none focus:border-green-400">
-            
-            <div id="login-fields">
-                <form action="/login" method="POST">
-                    <input type="hidden" name="username" id="hidden_user">
-                    <input type="password" name="password" placeholder="PASSWORD" class="w-full bg-black border border-green-900 p-2 mb-4 text-xs outline-none">
-                    <button type="submit" onmouseover="document.getElementById('hidden_user').value=document.getElementById('user_id').value" class="w-full bg-green-600 text-black font-bold py-2 text-xs">LOGIN_TO_SESSION</button>
-                </form>
-                <button onclick="showSignup()" class="w-full text-[9px] mt-4 opacity-50 underline">NEW USER? SIGNUP WITH OTP</button>
-            </div>
-
-            <div id="signup-fields" class="hidden">
-                <button onclick="sendOTP()" id="otp-btn" class="w-full bg-blue-900 text-white font-bold py-2 text-xs mb-4">SEND_VERIFICATION_CODE</button>
-                <div id="otp-confirm" class="hidden">
-                    <input type="text" id="otp_val" placeholder="6-DIGIT OTP" class="w-full bg-black border border-green-400 p-2 mb-2 text-xs">
-                    <input type="password" id="new_pass" placeholder="SET NEW PASSWORD" class="w-full bg-black border border-green-900 p-2 mb-4 text-xs">
-                    <button onclick="verifySignup()" class="w-full bg-green-600 text-black font-bold py-2 text-xs">VERIFY_&_FINISH</button>
-                </div>
-            </div>
-        </div>
+        <form action="/login" method="POST">
+            <input type="text" name="username" placeholder="EMAIL OR PHONE" class="w-full bg-black border border-green-900 p-2 mb-4 text-xs outline-none focus:border-green-400" required>
+            <input type="password" name="password" placeholder="PASSWORD" class="w-full bg-black border border-green-900 p-2 mb-6 text-xs outline-none focus:border-green-400" required>
+            <button type="submit" class="w-full bg-green-600 text-black font-bold py-2 text-xs hover:bg-white">INITIATE_SESSION</button>
+        </form>
     </div>
-
-    <script>
-        function showSignup() {
-            document.getElementById('login-fields').classList.add('hidden');
-            document.getElementById('signup-fields').classList.remove('hidden');
-        }
-        async function sendOTP() {
-            const target = document.getElementById('user_id').value;
-            if(!target) return alert("Email/Phone is mandatory!");
-            const res = await fetch('/send_otp', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({target})});
-            if(res.ok) {
-                document.getElementById('otp-btn').innerText = "OTP_SENT_CHECK_EMAIL";
-                document.getElementById('otp-confirm').classList.remove('hidden');
-            }
-        }
-        async function verifySignup() {
-            const otp = document.getElementById('otp_val').value;
-            const password = document.getElementById('new_pass').value;
-            const res = await fetch('/verify_signup', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({otp, password})});
-            const data = await res.json();
-            if(data.status === "SUCCESS") window.location.reload();
-            else alert("Error: " + data.status);
-        }
-    </script>
 </body>
 </html>
+
