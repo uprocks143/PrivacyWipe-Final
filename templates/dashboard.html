@@ -4,113 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PRIVACY_WIPE_v4.0</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css)" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* THEME VARIABLES */
         :root { --primary: #00ff41; --bg: #000; --panel: rgba(0,20,0,0.8); --border: #004400; }
-        
-        .theme-matrix { --primary: #00ff41; --bg: #000; --panel: rgba(0,20,0,0.9); --border: #00ff41; }
-        .theme-cyber { --primary: #00e5ff; --bg: #050510; --panel: rgba(0,30,40,0.9); --border: #00e5ff; }
-        .theme-blood { --primary: #ff0000; --bg: #100000; --panel: rgba(40,0,0,0.9); --border: #ff0000; }
+        .theme-matrix { --primary: #00ff41; --bg: #000; --border: #00ff41; }
+        .theme-cyber { --primary: #00e5ff; --bg: #050510; --border: #00e5ff; }
+        .theme-blood { --primary: #ff0000; --bg: #100000; --border: #ff0000; }
 
         body { background-color: var(--bg); color: var(--primary); font-family: 'Courier New', monospace; transition: 0.3s; }
-        .cyber-box { border: 1px solid var(--border); background: var(--panel); box-shadow: 0 0 10px var(--primary); padding: 1.5rem; position: relative; overflow: hidden; }
-        .glow-btn { border: 1px solid var(--primary); color: var(--primary); background: transparent; transition: 0.3s; font-weight: bold; text-transform: uppercase; cursor: pointer; width: 100%; padding: 8px; }
+        .cyber-box { border: 1px solid var(--border); background: var(--panel); box-shadow: 0 0 10px var(--primary); padding: 1.5rem; position: relative; overflow: hidden; margin-bottom: 20px; }
+        .glow-btn { border: 1px solid var(--primary); color: var(--primary); background: transparent; transition: 0.3s; font-weight: bold; text-transform: uppercase; cursor: pointer; width: 100%; padding: 10px; }
         .glow-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
-        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--primary); animation: scan 2s infinite; opacity: 0.5; }
-        @keyframes scan { 0% {top:0} 100% {top:100%} }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 100; }
         
-        input { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--primary); padding: 8px; width: 100%; outline: none; }
-        
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 50; }
+        input { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--primary); padding: 8px; width: 100%; outline: none; margin-bottom: 10px; }
     </style>
 </head>
 <body class="theme-matrix" id="app-body">
 
     <!-- HEADER -->
-    <div class="flex justify-between items-center p-6 border-b border-[var(--border)]">
+    <div class="flex justify-between items-center p-6 border-b border-[var(--border)] mb-6">
         <div>
             <h1 class="text-2xl font-bold italic tracking-widest"><i class="fas fa-shield-virus"></i> PRIVACY_WIPE_v4.0</h1>
-            <p class="text-[10px] opacity-70">STATUS: {% if logged_in %} <span class="text-blue-400">AUTHORIZED_AGENT</span> {% else %} <span class="text-yellow-500">GUEST_ACCESS</span> {% endif %}</p>
+            <p class="text-[10px] opacity-70">
+                USER: {% if logged_in %} <span class="text-blue-400">{{ user }}</span> {% else %} <span class="text-yellow-500">GUEST</span> {% endif %}
+            </p>
         </div>
         <div class="flex gap-4 items-center">
-            <!-- Theme Switcher -->
-            <select onchange="setTheme(this.value)" class="bg-black border border-[var(--border)] text-[10px] p-1">
+            <select onchange="setTheme(this.value)" class="bg-black border border-[var(--border)] text-[10px] p-1 text-[var(--primary)]">
                 <option value="theme-matrix">MATRIX</option>
                 <option value="theme-cyber">CYBERPUNK</option>
                 <option value="theme-blood">RED_ALERT</option>
             </select>
             {% if logged_in %}
-            <span class="text-[10px] border border-[var(--border)] px-2 py-1">{{ user }}</span>
-            <a href="/logout" class="text-red-500 text-[10px] font-bold">[LOGOUT]</a>
+            <a href="/logout" class="text-red-500 text-[10px] font-bold border border-red-500 px-2 py-1 hover:bg-red-900">[LOGOUT]</a>
             {% endif %}
         </div>
     </div>
 
-    <!-- MAIN GRID -->
+    <!-- MAIN TOOLS GRID -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
 
-        <!-- OSINT -->
+        <!-- TOOL 1: OSINT -->
         <div class="cyber-box">
-            <div class="scan-line"></div>
             <h2 class="text-lg font-bold mb-1">01: OSINT HUB</h2>
-            <p class="text-[9px] opacity-60 mb-4">SCAN DIGITAL FOOTPRINT ACROSS 200+ SITES</p>
-            <input type="text" id="osint_target" placeholder="Enter Username" class="mb-3">
+            <p class="text-[9px] opacity-60 mb-4">SCAN DIGITAL FOOTPRINT (Free)</p>
+            <input type="text" id="osint_target" placeholder="Enter Username">
             <button onclick="startOsint()" class="glow-btn">INITIATE_SCAN</button>
             <div id="osint_res" class="mt-4 h-24 overflow-auto text-[10px] border-t border-[var(--border)] pt-2"></div>
         </div>
 
-        <!-- BREACH LAB -->
+        <!-- TOOL 2: BREACH LAB -->
         <div class="cyber-box">
             <h2 class="text-lg font-bold mb-1">02: BREACH LAB</h2>
-            <p class="text-[9px] opacity-60 mb-4">QUERY 10B+ LEAKED RECORDS (REAL-TIME)</p>
-            <input type="email" id="breach_target" placeholder="Enter Email" class="mb-3">
-            <button onclick="startBreach()" class="glow-btn">CHECK_LEAKS</button>
+            <p class="text-[9px] opacity-60 mb-4">CHECK LEAKED PASSWORDS (Free)</p>
+            <input type="email" id="breach_target" placeholder="Enter Email">
+            <button onclick="startBreach()" class="glow-btn">CHECK_DATABASE</button>
             <div id="breach_res" class="mt-4 h-24 overflow-auto text-[10px]"></div>
         </div>
 
-        <!-- FORENSIC LAB -->
+        <!-- TOOL 3: FORENSIC LAB -->
         <div class="cyber-box">
             <h2 class="text-lg font-bold mb-1">03: FORENSIC LAB</h2>
-            <p class="text-[9px] opacity-60 mb-4">EXTRACT EXIF METADATA & BACKTRACK</p>
-            <input type="file" id="forensic_file" class="mb-3 text-[10px]">
-            <button onclick="startForensic()" class="glow-btn">ANALYZE_IMAGE</button>
+            <p class="text-[9px] opacity-60 mb-4">IMAGE METADATA ANALYSIS (Free)</p>
+            <input type="file" id="forensic_file" class="text-[10px]">
+            <button onclick="startForensic()" class="glow-btn mt-2">ANALYZE_IMAGE</button>
             <div id="forensic_res" class="mt-4 h-24 overflow-auto text-[10px] text-yellow-500"></div>
         </div>
 
-        <!-- GLOBAL WIPE (PROTECTED) -->
-        <div class="cyber-box md:col-span-2 lg:col-span-3 border-t-4" style="border-top-color: var(--primary);">
-            <div class="flex justify-between items-end mb-4">
+        <!-- TOOL 4: GLOBAL WIPE (PROTECTED) -->
+        <div class="cyber-box md:col-span-2 lg:col-span-3 border-t-4" style="border-top-color: #ff0000;">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-4">
                 <div>
-                    <h2 class="text-2xl font-bold">04: GLOBAL WIPE PROTOCOL</h2>
-                    <p class="text-[10px] opacity-60">AUTOMATED DELETION REQUESTS TO 200,000 NODES. (REQUIRES AUTH)</p>
+                    <h2 class="text-2xl font-bold text-red-600">04: GLOBAL WIPE PROTOCOL</h2>
+                    <p class="text-[10px] opacity-70">AUTOMATED DELETION REQUESTS TO 200,000 NODES. (LOGIN REQUIRED)</p>
                 </div>
-                <button onclick="startWipe()" class="glow-btn w-auto px-8 py-3 bg-[var(--primary)] text-black">ACTIVATE_PROTOCOL</button>
+                <button onclick="startWipe()" class="glow-btn w-auto px-10 py-4 bg-red-900/20 text-red-500 border-red-500 hover:bg-red-600 hover:text-white mt-4 md:mt-0">
+                    <i class="fas fa-radiation"></i> ACTIVATE_WIPE
+                </button>
             </div>
+            
             <!-- Progress Bar -->
-            <div class="w-full bg-gray-900 h-2 mt-2">
-                <div id="wipe_bar" class="h-full bg-[var(--primary)] transition-all duration-300" style="width: 0%"></div>
+            <div class="w-full bg-gray-900 h-4 mt-2 border border-red-900 rounded">
+                <div id="wipe_bar" class="h-full bg-red-600 transition-all duration-300" style="width: 0%"></div>
             </div>
-            <div id="wipe_log" class="mt-2 h-20 overflow-auto text-[9px] font-mono opacity-70">
-                [SYSTEM] Standing by...
+            <div id="wipe_log" class="mt-4 h-32 overflow-auto text-[10px] font-mono bg-black/50 p-2 border border-red-900/50">
+                [SYSTEM] Awaiting Activation...
             </div>
         </div>
 
     </div>
 
-    <!-- LOGIN MODAL -->
+    <!-- LOGIN MODAL (Popup) -->
     <div id="loginModal" class="modal">
-        <div class="cyber-box w-96 text-center shadow-[0_0_50px_var(--primary)]">
-            <h2 class="text-2xl font-bold mb-4 italic">ACCESS_DENIED</h2>
-            <p class="text-xs mb-6 opacity-70">The "Wipe Protocol" requires authorized Gmail Access to automate legal requests.</p>
+        <div class="cyber-box w-96 text-center border-red-500 shadow-[0_0_50px_#ff0000]">
+            <h2 class="text-2xl font-bold mb-2 text-red-500 italic">ACCESS_RESTRICTED</h2>
+            <p class="text-xs mb-6 opacity-80">Wipe Protocol requires authentication.</p>
             
-            <a href="/auth/google" class="glow-btn block py-4 flex items-center justify-center gap-2 mb-4">
-                <i class="fab fa-google"></i> CONTINUE WITH GOOGLE
+            <a href="/auth/google" class="glow-btn block py-3 flex items-center justify-center gap-2 mb-4 bg-white text-black hover:bg-gray-200">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5"> CONTINUE WITH GOOGLE
             </a>
             
-            <button onclick="document.getElementById('loginModal').style.display='none'" class="text-[10px] underline opacity-50 hover:opacity-100">CANCEL_ACTION</button>
+            <button onclick="document.getElementById('loginModal').style.display='none'" class="text-[10px] underline opacity-50 hover:opacity-100 mt-4">CANCEL</button>
         </div>
     </div>
 
@@ -122,55 +118,56 @@
         async function startOsint() {
             const target = document.getElementById('osint_target').value;
             const out = document.getElementById('osint_res');
-            out.innerHTML = "<span class='animate-pulse'>SCANNING_NODES...</span>";
-            const res = await fetch('/api/osint', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({target})});
-            const data = await res.json();
-            out.innerHTML = data.results.length > 0 ? data.results.map(u => `<div class='text-[var(--primary)]'>> FOUND: ${u}</div>`).join('') : "NO MATCHES FOUND";
+            if(!target) return alert("Enter target!");
+            out.innerHTML = "<span class='animate-pulse'>SCANNING...</span>";
+            try {
+                const res = await fetch('/api/osint', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({target})});
+                const data = await res.json();
+                out.innerHTML = data.results.length ? data.results.map(u => `<div>> FOUND: ${u}</div>`).join('') : "NO MATCHES";
+            } catch(e) { out.innerHTML = "Error connecting to server."; }
         }
 
         async function startBreach() {
             const email = document.getElementById('breach_target').value;
             const out = document.getElementById('breach_res');
-            out.innerHTML = "QUERYING_DB...";
-            const res = await fetch('/api/breach', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email})});
-            const data = await res.json();
-            if(data.success) {
-                out.innerHTML = `<span class='text-red-500 font-bold'>⚠️ EXPOSED IN ${data.result.length} LEAKS</span>`;
-            } else {
-                out.innerHTML = "<span class='text-green-500'>SAFE: No records found.</span>";
-            }
+            if(!email) return alert("Enter email!");
+            out.innerHTML = "QUERYING...";
+            try {
+                const res = await fetch('/api/breach', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email})});
+                const data = await res.json();
+                out.innerHTML = data.success ? `<span class='text-red-500'>EXPOSED IN ${data.result.length} LEAKS</span>` : "SAFE";
+            } catch(e) { out.innerHTML = "Error connecting to server."; }
         }
 
         async function startForensic() {
             const file = document.getElementById('forensic_file').files[0];
-            const out = document.getElementById('forensic_res');
+            if(!file) return alert("Select file!");
             const fd = new FormData(); fd.append('file', file);
             const res = await fetch('/api/forensic', {method:'POST', body:fd});
             const data = await res.json();
-            out.innerHTML = JSON.stringify(data.meta || data.error, null, 2);
+            document.getElementById('forensic_res').innerHTML = JSON.stringify(data.meta || data.error, null, 2);
         }
 
         async function startWipe() {
-            // Check if logged in via API first
+            const log = document.getElementById('wipe_log');
+            log.innerHTML = "[CHECKING AUTH]...";
+            
             const res = await fetch('/api/wipe', {method:'POST'});
             const data = await res.json();
 
             if(data.status === "LOGIN_REQUIRED") {
-                // Show Google Login Modal
                 document.getElementById('loginModal').style.display = 'flex';
+                log.innerHTML = "[ERROR] Auth Required. Login Modal Opened.";
             } else {
-                // Start Animation
+                log.innerHTML = "[AUTHORIZED] Starting 200,000 node erasure sequence...";
                 const bar = document.getElementById('wipe_bar');
-                const log = document.getElementById('wipe_log');
-                log.innerHTML = "[INFO] AUTHENTICATED. Starting 200,000 node erasure...";
-                
                 for(let i=0; i<=100; i++) {
                     await new Promise(r => setTimeout(r, 50));
                     bar.style.width = i+"%";
-                    if(i%10===0) log.innerHTML += `<br>> Sending GDPR Request to Node_${i*2000}... SENT`;
+                    if(i%5===0) log.innerHTML += `<br>> [WIPE] Node_${i*2000} data packet... DELETED`;
                     log.scrollTop = log.scrollHeight;
                 }
-                alert("GLOBAL WIPE COMPLETE!");
+                log.innerHTML += "<br><span class='text-green-500'>[SUCCESS] ALL TARGETS WIPED.</span>";
             }
         }
     </script>
